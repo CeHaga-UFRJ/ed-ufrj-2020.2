@@ -1,7 +1,18 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAXN 10000
+#define N 8
+
+void overflow(int **v, int *tam){
+  int *tmp = (int *)malloc(sizeof(int) * 2 * (*tam));
+  for(int i = 0; i < (*tam); i++){
+    tmp[i] = (*v)[i];
+  }
+  (*tam) *= 2;
+  free((*v));
+  (*v) = tmp;
+}
 
 // --------------------------
 //       SELECTION SORT
@@ -45,7 +56,7 @@ void merge(int v[], int aux[], int ini, int fim){
   for(int i = ini; i <= fim; i++){
     v[i] = aux[i-ini];
   }
-};
+}
 
 void mergeSortRec(int v[], int aux[], int ini, int fim){
   int m = (ini+fim)/2;
@@ -54,10 +65,10 @@ void mergeSortRec(int v[], int aux[], int ini, int fim){
     mergeSortRec(v, aux, m+1, fim);
     merge(v, aux, ini, fim);
   }
-};
+}
 
 void mergeSort(int v[], int n){
-  int aux[MAXN];
+  int *aux = (int *)malloc(sizeof(int) * n);
   mergeSortRec(v, aux, 0, n-1);
 }
 
@@ -95,26 +106,30 @@ void quicksort(int v[], int n){
 // ----------------
 
 int main(int argc, char **argv){
-	int n = 0;
-	int array[MAXN];
-	while(scanf("%d",&array[n]) == 1) n++;
+	int n = N;
+	int *array = (int *)malloc(sizeof(int)*n);
+  int num;
+  int k = 0;
+	while(scanf("%d",&num) == 1){
+    if(n == k+1){
+      overflow(&array,&n);
+    }
+    array[k++] = num;
+  }
 
   if(argc == 1){
-    printf("Usando a ordenação SelectionSort\n");
-    selectionSort(array,n);
+    selectionSort(array,k);
   }else{
     if(strcmp(argv[1],"-q") == 0){
-    printf("Usando a ordenação QuickSort\n");
-      quicksort(array,n);
+      quicksort(array,k);
     }
     if(strcmp(argv[1],"-m") == 0){
-    printf("Usando a ordenação MergeSort\n");
-      mergeSort(array,n);
+      mergeSort(array,k);
     }
   }
 
-	for(int i = 0; i < n; i++){
-		printf("%d\n",array[i]);
-	}
-	return 0;
+  for(int i = 0; i < k; i++){
+    printf("%d\n",array[i]);
+  }
+  return 0;
 }
